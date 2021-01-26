@@ -32,7 +32,7 @@ def adb_connect_androidtv():
     execute("adb connect 192.168.10.101:5555")
     
 def display_device():
-    execute_p("scrcpy -m 1600")
+    execute_p("scrcpy -m 1920 -b 9M")
     
 def install_pkg():
     my_filetypes = [('apk files', '.apk')]
