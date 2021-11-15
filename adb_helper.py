@@ -4,7 +4,7 @@ Created on Jan 22, 2021
 @author: Guilherme
 '''
 
-from tkinter import Tk, Button, filedialog
+from tkinter import Tk, Button, filedialog, simpledialog
 from subprocess import run, Popen
 
 root = Tk()
@@ -24,30 +24,39 @@ def create_button(text, width, position, command):
 
 def adb_connect_firetv():
     execute("adb disconnect")
-    execute("adb connect 192.168.10.130:5555")
+    execute("adb connect 192.168.5.118:5555")
     
-
 def adb_connect_androidtv():
     execute("adb disconnect")
-    execute("adb connect 192.168.10.101:5555")
+    execute("adb connect 192.168.5.101:5555")
+
+def adb_disconnect():
+    execute("adb disconnect")
     
+def take_screenshot():
+    file_name = simpledialog.askstring("", "Input a name for the screenshot.\
+    \nIt shouldn't be empty nor include forbidden characters.\
+    \nForbidden characters:  <  >  :  \"  /  \\  |  ?  *")
+    forbidden_chars = ['<','>',':','"','/','\\','|','?','*']
+    if file_name != "" and file_name not in forbidden_chars:
+        execute(f"adb exec-out screencap -p > {file_name}.png")
+
 def display_device():
-    execute_p("scrcpy -m 1920 -b 9M")
+    execute_p("scrcpy -m 1920 -b 10M")
     
 def install_pkg():
     my_filetypes = [('apk files', '.apk')]
     path = filedialog.askopenfilename(filetypes = my_filetypes)
     if path != "":
-        execute_p(f'adb install -r "{path}"')
+        execute_p(f'adb install "{path}"')
+        
 
-def adb_disconnect():
-    execute("adb disconnect")
-
-create_button("Connect to FireTV", 20, [10, 30], adb_connect_firetv)
-create_button("Connect to AndroidTV", 20, [10, 70], adb_connect_androidtv)
-create_button("Display device", 20, [210, 10], display_device)
-create_button("Install .apk", 20, [210, 50], install_pkg)
-create_button("Disconnect", 20, [210, 90], adb_disconnect)
+create_button("Connect to FireTV", 20, [10, 10], adb_connect_firetv)
+create_button("Connect to AndroidTV", 20, [10, 50], adb_connect_androidtv)
+create_button("Disconnect", 20, [10, 90], adb_disconnect)
+create_button("Take screenshot", 20, [210, 10], take_screenshot)
+create_button("Display device", 20, [210, 50], display_device)
+create_button("Install .apk", 20, [210, 90], install_pkg)
 
 root.resizable(False, False)
 root.mainloop()
